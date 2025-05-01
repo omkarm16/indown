@@ -1,23 +1,31 @@
-import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css';
 
 function App() {
+  const [url, setUrl] = useState('');
+  const [downloadLink, setDownloadLink] = useState('');
+
+  const handleDownload = async () => {
+    const response = await fetch('http://localhost:5000/download', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    });
+    const data = await response.json();
+    setDownloadLink(data.downloadLink);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <h1>InstaDownloader</h1>
+      <input
+        type="text"
+        placeholder="Paste Instagram URL"
+        value={url}
+        onChange={(e) => setUrl(e.target.value)}
+      />
+      <button onClick={handleDownload}>Download</button>
+      {downloadLink && <a href={downloadLink} download>Click to Download</a>}
     </div>
   );
 }
