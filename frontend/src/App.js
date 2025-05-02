@@ -1,31 +1,30 @@
-import { useState } from 'react';
-import './App.css';
+import React, { useState } from 'react';
+import './index.css';
+import TopBar from './components/TopBar';
+import Downloader from './components/Downloader';
+import LanguageSelector from './components/LanguageSelector';
 
 function App() {
-  const [url, setUrl] = useState('');
-  const [downloadLink, setDownloadLink] = useState('');
+  const [mode, setMode] = useState('video');
 
-  const handleDownload = async () => {
-    const response = await fetch('http://localhost:5000/download', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url })
-    });
-    const data = await response.json();
-    setDownloadLink(data.downloadLink);
+  const handleModeChange = (newMode) => {
+    setMode(newMode);
+    console.log(`Switched to ${newMode} mode`);
   };
 
   return (
-    <div className="container">
-      <h1>InstaDownloader</h1>
-      <input
-        type="text"
-        placeholder="Paste Instagram URL"
-        value={url}
-        onChange={(e) => setUrl(e.target.value)}
-      />
-      <button onClick={handleDownload}>Download</button>
-      {downloadLink && <a href={downloadLink} download>Click to Download</a>}
+    <div className="app">
+      <header>
+        <div className="logo">InstaDL</div>
+        <div className="header-right">
+          <LanguageSelector />
+          <a href="#">FAQ</a>
+        </div>
+      </header>
+
+      <TopBar onModeChange={handleModeChange} />
+
+      <Downloader mode={mode} />
     </div>
   );
 }
