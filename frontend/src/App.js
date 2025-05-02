@@ -15,8 +15,8 @@ function App() {
     <div className="app">
       <header>
         <div className="logo-container">
-          <img src="/logo.png" alt="InstaMask Logo" className="logo-img" />
-          <div className="logo-text">InstaMask</div>
+          <img src="/favicon.png" alt="logo" />
+          <div className="logo">Instamask</div>
         </div>
         <div className="header-right">
           <LanguageSelector />

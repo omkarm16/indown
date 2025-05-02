@@ -1,60 +1,86 @@
 import React, { useState } from 'react';
-import './Downloader.css';
+import '../index.css'; // make sure your styles apply
 
 function Downloader({ mode }) {
-  const [link, setLink] = useState('');
+  const [inputUrl, setInputUrl] = useState('');
   const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
-
-  const handleDownload = () => {
-    if (!link.trim()) return alert('Please enter a link!');
-
-    setLoading(true);
-    setProgress(0);
-
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setLoading(false);
-          alert(`Downloaded ${mode} from:\n${link}`);
-          return 100;
-        }
-        return prev + 20;
-      });
-    }, 400);
-  };
+  const [downloadLinks, setDownloadLinks] = useState([]);
+  const [error, setError] = useState('');
 
   const handlePaste = async () => {
-    const text = await navigator.clipboard.readText();
-    setLink(text);
+    try {
+      const text = await navigator.clipboard.readText();
+      setInputUrl(text);
+    } catch (err) {
+      alert('Unable to paste from clipboard');
+    }
+  };
+
+  const handleDownload = async () => {
+    if (!inputUrl.trim()) {
+      alert('Please enter a valid Instagram URL');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+    setDownloadLinks([]);
+
+    try {
+      const response = await fetch('http://localhost:5000/api/download', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: inputUrl }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.data && data.data.length > 0) {
+        setDownloadLinks(data.data);
+      } else {
+        setError(data.error || 'No downloadable content found');
+      }
+    } catch (err) {
+      setError('Failed to connect to backend');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="downloader">
-      <h1>Instagram Downloader</h1>
-      <p>Download Instagram {mode}s easily</p>
+      <h1>Download Instagram {mode}</h1>
+      <p>Paste Instagram {mode} link below to download</p>
 
       <div className="input-box">
         <input
           type="text"
-          placeholder="Insert Instagram link here"
-          value={link}
-          onChange={(e) => setLink(e.target.value)}
+          placeholder="Paste Instagram link here"
+          value={inputUrl}
+          onChange={(e) => setInputUrl(e.target.value)}
         />
         <button onClick={handlePaste}>Paste</button>
       </div>
 
       <button className="download-btn" onClick={handleDownload}>
-        Download
+        {loading ? 'Processing...' : 'Get Download Link'}
       </button>
 
-      {loading && (
-        <div className="loader">
-          <div className="progress-bar" style={{ width: `${progress}%` }}></div>
-          <p>Fetching {mode}... {progress}%</p>
-        </div>
-      )}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+
+      <div>
+        {downloadLinks.map((link, index) => (
+          <a
+            key={index}
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="download-link"
+          >
+            Download File {index + 1}
+          </a>
+        ))}
+      </div>
     </div>
   );
 }
