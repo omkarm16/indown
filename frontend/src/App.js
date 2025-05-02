@@ -14,7 +14,10 @@ function App() {
   return (
     <div className="app">
       <header>
-        <div className="logo">InstaDL</div>
+        <div className="logo-container">
+          <img src="/logo.png" alt="InstaMask Logo" className="logo-img" />
+          <div className="logo-text">InstaMask</div>
+        </div>
         <div className="header-right">
           <LanguageSelector />
           <a href="#">FAQ</a>
