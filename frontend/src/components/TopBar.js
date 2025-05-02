@@ -1,16 +1,29 @@
 import React from 'react';
 import './TopBar.css';
-import { FaVideo, FaImage, FaCalendar, FaSync, FaCopy, FaEye } from 'react-icons/fa';
+import { FaVideo, FaImage, FaCalendarAlt, FaSyncAlt, FaCopy, FaEye } from 'react-icons/fa';
 
-function TopBar({ onModeChange }) {
+function TopBar({ onModeChange, selectedMode }) {
+  const icons = [
+    { mode: 'video', icon: <FaVideo /> },
+    { mode: 'image', icon: <FaImage /> },
+    { mode: 'reel', icon: <FaCalendarAlt /> },
+    { mode: 'igtv', icon: <FaSyncAlt /> },
+    { mode: 'carousel', icon: <FaCopy /> },
+    { mode: 'story', icon: <FaEye /> },
+  ];
+
   return (
     <div className="top-bar">
-      <button onClick={() => onModeChange('video')}><FaVideo /></button>
-      <button onClick={() => onModeChange('image')}><FaImage /></button>
-      <button onClick={() => onModeChange('reel')}><FaCalendar /></button>
-      <button onClick={() => onModeChange('igtv')}><FaSync /></button>
-      <button onClick={() => onModeChange('carousel')}><FaCopy /></button>
-      <button onClick={() => onModeChange('story')}><FaEye /></button>
+      {icons.map((item) => (
+        <button
+          key={item.mode}
+          className={selectedMode === item.mode ? 'active' : ''}
+          onClick={() => onModeChange(item.mode)}
+          title={item.mode}
+        >
+          {item.icon}
+        </button>
+      ))}
     </div>
   );
 }

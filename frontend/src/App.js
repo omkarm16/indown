@@ -3,14 +3,13 @@ import './index.css';
 import TopBar from './components/TopBar';
 import Downloader from './components/Downloader';
 import LanguageSelector from './components/LanguageSelector';
+import Footer from './components/Footer';
+import ShareButtons from './components/ShareButtons';
 
 function App() {
   const [mode, setMode] = useState('video');
 
-  const handleModeChange = (newMode) => {
-    setMode(newMode);
-    console.log(`Switched to ${newMode} mode`);
-  };
+  const handleModeChange = (newMode) => setMode(newMode);
 
   return (
     <div className="app">
@@ -22,9 +21,10 @@ function App() {
         </div>
       </header>
 
-      <TopBar onModeChange={handleModeChange} />
-
+      <TopBar onModeChange={handleModeChange} selectedMode={mode} />
       <Downloader mode={mode} />
+      <ShareButtons />
+      <Footer />
     </div>
   );
 }

@@ -7,22 +7,27 @@ function Downloader({ mode }) {
   const [progress, setProgress] = useState(0);
 
   const handleDownload = () => {
-    if (!link) return alert("Please enter a link!");
+    if (!link.trim()) return alert('Please enter a link!');
 
     setLoading(true);
     setProgress(0);
 
     const interval = setInterval(() => {
-      setProgress((old) => {
-        if (old >= 100) {
+      setProgress((prev) => {
+        if (prev >= 100) {
           clearInterval(interval);
           setLoading(false);
-          console.log(`Downloaded ${mode} from link: ${link}`);
+          alert(`Downloaded ${mode} from:\n${link}`);
           return 100;
         }
-        return old + 10;
+        return prev + 20;
       });
-    }, 300);
+    }, 400);
+  };
+
+  const handlePaste = async () => {
+    const text = await navigator.clipboard.readText();
+    setLink(text);
   };
 
   return (
@@ -37,15 +42,17 @@ function Downloader({ mode }) {
           value={link}
           onChange={(e) => setLink(e.target.value)}
         />
-        <button onClick={() => navigator.clipboard.readText().then(setLink)}>Paste</button>
+        <button onClick={handlePaste}>Paste</button>
       </div>
 
-      <button className="download-btn" onClick={handleDownload}>Download</button>
+      <button className="download-btn" onClick={handleDownload}>
+        Download
+      </button>
 
       {loading && (
         <div className="loader">
           <div className="progress-bar" style={{ width: `${progress}%` }}></div>
-          <p>Fetching content... {progress}%</p>
+          <p>Fetching {mode}... {progress}%</p>
         </div>
       )}
     </div>

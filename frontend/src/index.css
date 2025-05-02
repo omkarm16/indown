@@ -43,10 +43,20 @@ header {
   font-size: 20px;
   color: white;
   cursor: pointer;
+  padding: 8px;
+}
+
+.top-bar button.active {
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
 }
 
 .downloader h1 {
   font-size: 28px;
+}
+
+.downloader p {
+  margin-bottom: 20px;
 }
 
 .input-box {

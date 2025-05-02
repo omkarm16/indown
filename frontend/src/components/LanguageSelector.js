@@ -7,6 +7,8 @@ function LanguageSelector() {
       <option>EN</option>
       <option>ES</option>
       <option>FR</option>
+      <option>DE</option>
+      <option>IT</option>
     </select>
   );
 }
