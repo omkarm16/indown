@@ -1,34 +1,42 @@
 const express = require('express');
 const cors = require('cors');
-const ig = require('instagram-url-direct');
+const bodyParser = require('body-parser');
+const axios = require('axios');
 
 const app = express();
 const PORT = 5000;
 
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json());
 
-app.get('/', (req, res) => {
-  res.send('InstaMask backend is running 🚀');
-});
-
-// Download endpoint
 app.post('/api/download', async (req, res) => {
   const { url } = req.body;
+
+  if (!url) {
+    return res.status(400).json({ error: 'No URL provided' });
+  }
+
   try {
-    const result = await ig.instagramGetUrl(url);
-    console.log('Result:', result);
-    if (result && result.url_list && result.url_list.length > 0) {
-      return res.json({ downloadLink: result.url_list[0] });
+    const response = await axios.get('https://instagram-scrapper-posts-reels-stories-downloader.p.rapidapi.com/', {
+      params: { link: url },
+      headers: {
+        'x-rapidapi-host': 'instagram-scrapper-posts-reels-stories-downloader.p.rapidapi.com',
+        'x-rapidapi-key': '601c83bbb1msh0f528e911063c38p16f99ejsnae9939a4b65c'
+      }
+    });
+
+    if (response.data && response.data.link) {
+      res.json({ downloadUrl: response.data.link });
     } else {
-      return res.status(404).json({ error: 'No downloadable link found' });
+      res.status(400).json({ error: 'Unable to fetch download link' });
     }
+
   } catch (error) {
-    console.error('Error fetching Instagram URL:', error);
-    return res.status(500).json({ error: 'Failed to fetch Instagram URL' });
+    console.error('Error fetching from RapidAPI:', error.message);
+    res.status(500).json({ error: 'Server error fetching Instagram media' });
   }
 });
 
 app.listen(PORT, () => {
-  console.log(`Backend server running at http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
